@@ -1,0 +1,10 @@
+# Ignore Jupyter notebooks
+HeartdiseaseFinal.ipynb
+preprocessig.ipynb
+
+# Ignore the raw dataset
+heart.csv
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
