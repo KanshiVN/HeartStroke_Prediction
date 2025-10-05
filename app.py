@@ -43,7 +43,7 @@ def download_and_unzip_models(url, dest_folder='/tmp'):
     return True
 
 # URL from your GitHub Release for the models.zip file
-MODELS_ZIP_URL = 'PASTE_YOUR_MODELS.ZIP_URL_HERE'
+MODELS_ZIP_URL = 'https://github.com/user-attachments/files/22709667/models.zip'
 
 # Call the function to ensure models are ready
 models_ready = download_and_unzip_models(MODELS_ZIP_URL)
