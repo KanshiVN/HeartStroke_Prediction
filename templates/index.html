@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3f51b5; /* Deep Indigo */
+            --secondary-color: #ff4081; /* Pink Accent */
+            --background-light: #e8eaf6; /* Lighter Indigo Background */
+            --background-card: #ffffff;
+            --text-dark: #263238;
+            --text-light: #546e7a;
+            --border-light: #cfd8dc;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--background-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            color: var(--text-dark);
+            box-sizing: border-box; /* Ensure padding doesn't affect total width */
+        }
+
+        .container {
+            background-color: var(--background-card);
+            padding: 2.5rem 3.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+            border-top: 5px solid var(--primary-color); /* A subtle top border */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            font-size: 2.5rem;
+        }
+
+        h1 span {
+            color: var(--secondary-color);
+        }
+
+        p {
+            color: var(--text-light);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+            gap: 1.8rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        label::before {
+            content: "•";
+            color: var(--secondary-color);
+            margin-right: 0.5rem;
+            font-size: 1.2em;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.3s ease-in-out;
+            background-color: #fcfcfc;
+            color: var(--text-dark);
+            appearance: none; /* Remove default select arrow */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-4.9%200-9.2%202.4-12.9%205.8-3.6%203.4-5.4%207.9-5.4%2012.8%200%204.9%201.8%209.4%205.4%2012.8l128%20127.9c3.6%203.6%208.2%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-8.1%205.4-12.8%200-4.7-1.9-9.3-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow for select */
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 0.8em;
+            padding-right: 2.5rem; /* Space for the custom arrow */
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+            background-color: #fff;
+        }
+
+        /* Styling for the custom number input arrows (Chrome, Edge, Safari) */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        /* Styling for the custom number input arrows (Firefox) */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .predict-btn {
+            grid-column: 1 / -1;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), #5c6bc0);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            margin-top: 1.5rem;
+            box-shadow: 0 5px 15px rgba(63, 81, 181, 0.3);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(63, 81, 181, 0.4);
+            background: linear-gradient(45deg, #5c6bc0, var(--primary-color)); /* Subtle gradient shift */
+        }
+
+        .predict-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Ripple effect for button */
+        .predict-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(1) translate(-50%, -50%);
+            transition: width 0.5s ease-out, height 0.5s ease-out, opacity 0.5s ease-out;
+        }
+        .predict-btn:active::after {
+            width: 200%;
+            height: 200%;
+            opacity: 1;
+            transition: 0s; /* Instant start */
+        }
+
+
+        .result {
+            margin-top: 2.5rem;
+            padding: 1.2rem;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            animation: slideInResult 0.6s ease-out forwards;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        @keyframes slideInResult {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .result.high-risk { 
+            background-color: #ffebee; 
+            color: var(--error-color); 
+            border: 1px solid #ef9a9a;
+        }
+        .result.high-risk::before {
+            background-color: var(--error-color);
+        }
+
+        .result.low-risk { 
+            background-color: #e8f5e9; 
+            color: var(--success-color); 
+            border: 1px solid #a5d6a7;
+        }
+        .result.low-risk::before {
+            background-color: var(--success-color);
+        }
+
+        .result span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            form {
+                grid-template-columns: 1fr; /* Single column layout on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Heart Disease <span>Prediction</span> ❤️</h1>
+        <p>Enter the patient's medical details below to assess their risk of heart disease. Timely information can lead to better health outcomes.</p>
+        
+        <form action="{{ url_for('predict') }}" method="post">
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" min="18" max="100" value="30" required>
+            </div>
+            <div class="form-group">
+                <label for="sex">Sex</label>
+                <select id="sex" name="sex">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="chest_pain">Chest Pain Type</label>
+                <select id="chest_pain" name="chest_pain">
+                    <option value="ATA">Atypical Angina</option>
+                    <option value="NAP">Non-Anginal Pain</option>
+                    <option value="TA">Typical Angina</option>
+                    <option value="ASY">Asymptomatic</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="resting_bp">Resting Blood Pressure (mm Hg)</label>
+                <input type="number" id="resting_bp" name="resting_bp" value="120" required>
+            </div>
+            <div class="form-group">
+                <label for="cholesterol">Cholesterol (mg/dL)</label>
+                <input type="number" id="cholesterol" name="cholesterol" value="200" required>
+            </div>
+            <div class="form-group">
+                <label for="fasting_bs">Fasting Blood Sugar > 120 mg/dL</label>
+                <select id="fasting_bs" name="fasting_bs">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="resting_ecg">Resting ECG</label>
+                <select id="resting_ecg" name="resting_ecg">
+                    <option value="Normal">Normal</option>
+                    <option value="ST">ST-T Wave Abnormality</option>
+                    <option value="LVH">Left Ventricular Hypertrophy</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="max_hr">Max Heart Rate</label>
+                <input type="number" id="max_hr" name="max_hr" value="150" required>
+            </div>
+            <div class="form-group">
+                <label for="exercise_angina">Exercise-Induced Angina</label>
+                <select id="exercise_angina" name="exercise_angina">
+                    <option value="N">No</option>
+                    <option value="Y">Yes</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="oldpeak">Oldpeak (ST Depression)</label>
+                <input type="number" id="oldpeak" name="oldpeak" step="0.1" value="1.0" required>
+            </div>
+            <div class="form-group full-width">
+                <label for="st_slope">ST Slope</label>
+                <select id="st_slope" name="st_slope">
+                    <option value="Up">Upsloping</option>
+                    <option value="Flat">Flat</option>
+                    <option value="Down">Downsloping</option>
+                </select>
+            </div>
+            <button type="submit" class="predict-btn">Predict Risk</button>
+        </form>
+
+        {% if prediction_text %}
+            <div class="result {% if 'High Risk' in prediction_text %}high-risk{% else %}low-risk{% endif %}">
+                <span>{{ prediction_text }}</span>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
